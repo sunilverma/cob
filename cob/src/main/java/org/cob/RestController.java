@@ -11,6 +11,9 @@ import org.activiti.engine.repository.ProcessDefinition;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.lang3.StringUtils;
+import org.cob.dao.ClientJpaRepository;
+import org.cob.model.Client;
+import org.hibernate.mapping.Array;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +23,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+
+
 
 
 import com.google.gson.Gson;
@@ -33,10 +39,15 @@ public class RestController {
 	 	@Autowired
 		private TaskService taskService;
 	    
-	    @RequestMapping(value = "/startProcess")
-	    public ProcessId startProcess() {
-	 		Map varibales = new HashMap();
+	 	@Autowired
+	 	private ClientJpaRepository clientRepository;
+	    @RequestMapping(value = "/startProcess", method= RequestMethod.POST, produces= MediaType.APPLICATION_JSON_VALUE)
+	    public ProcessId startProcess(@RequestBody Map<String, String> data) {
+	 		Map<String,Object> varibales = new HashMap<String,Object>();
 	 		varibales.put("input", false);
+	 		Client client = new Client(data.get("name"),data.get("country"));
+	 		clientRepository.save(client);
+	 		varibales.put("client", client);
 	 		ProcessInstance processInstance =runtimeService.startProcessInstanceByKey("myProcess",varibales);
 	 		System.out.println("processInstance.id: "+processInstance.getId());
 	 		return new ProcessId(processInstance.getId());
@@ -44,15 +55,17 @@ public class RestController {
 	    
 	    @ResponseStatus(value = HttpStatus.OK)
 	    @RequestMapping(value = "/listTask", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	    public List<Task> listTask(@RequestParam(value="processInstanceId") String processInstanceId) {
-	    	System.out.println( taskService.createTaskQuery()
-	                .processInstanceId(processInstanceId)
-	                .orderByTaskName().asc()
-	                .list());
-	    	return taskService.createTaskQuery()
+	    public Map<String,String> listTask(@RequestParam(value="processInstanceId") String processInstanceId) {
+	    	List<Task> tasks= taskService.createTaskQuery()
 	                .processInstanceId(processInstanceId)
 	                .orderByTaskName().asc()
 	                .list();
+	    	Map<String,String> taskNameList= new HashMap<String, String>();
+	    	for(Task task:tasks){
+	    		taskNameList.put(task.getId(), task.getName());
+	    	}
+
+	    	return taskNameList;
 	    }
 	    
 	    @ResponseStatus(value = HttpStatus.OK)

@@ -3,12 +3,20 @@
   <signal id="MySignal" name="My Signal"></signal>
   <process id="myProcess" name="My process" isExecutable="true">
     <startEvent id="startevent1" name="Start"></startEvent>
-    <userTask id="narf_completed" name="NARF form Completed"></userTask>
+    <userTask id="narf_completed" name="NARF form Completed">
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.cob.TaskPublisher"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="narf_completed"></sequenceFlow>
     <parallelGateway id="parallelgateway1" name="Parallel Gateway"></parallelGateway>
     <sequenceFlow id="flow2" sourceRef="narf_completed" targetRef="parallelgateway1"></sequenceFlow>
     <subProcess id="subprocess2" name="Sub Process">
-      <userTask id="usertask1" name="Setup Client in CLH"></userTask>
+      <userTask id="usertask1" name="Setup Client in CLH">
+        <extensionElements>
+          <activiti:taskListener event="create" class="org.cob.TaskPublisher"></activiti:taskListener>
+        </extensionElements>
+      </userTask>
       <startEvent id="startevent2" name="Start"></startEvent>
       <sequenceFlow id="flow6" sourceRef="startevent2" targetRef="usertask1"></sequenceFlow>
       <callActivity id="callactivity1" name="System Configuration" calledElement="systemConfig">
@@ -25,7 +33,11 @@
     <sequenceFlow id="flow4" sourceRef="parallelgateway1" targetRef="subprocess2"></sequenceFlow>
     <subProcess id="subprocess3" name="Sub Process">
       <startEvent id="startevent3" name="Start"></startEvent>
-      <userTask id="usertask3" name="New Client Flow"></userTask>
+      <userTask id="usertask3" name="New Client Flow">
+        <extensionElements>
+          <activiti:taskListener event="create" class="org.cob.TaskPublisher"></activiti:taskListener>
+        </extensionElements>
+      </userTask>
       <userTask id="usertask4" name="ICON/S1"></userTask>
       <sequenceFlow id="flow11" sourceRef="usertask3" targetRef="usertask4"></sequenceFlow>
       <userTask id="usertask5" name="ICON/S2"></userTask>

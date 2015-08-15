@@ -1,5 +1,7 @@
 package org.cob.model;
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,7 +17,18 @@ public class Client {
 
     private String country;
 
-    public Client(){
+    private String lob;
+    
+
+	public String getLob() {
+		return lob;
+	}
+
+	public void setLob(String lob) {
+		this.lob = lob;
+	}
+
+	public Client(){
     	
     }
     
