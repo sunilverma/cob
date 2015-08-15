@@ -56,6 +56,14 @@ public class RestController {
 	    }
 	    
 	    @ResponseStatus(value = HttpStatus.OK)
+	    @RequestMapping(value = "/setupNewClientFlow", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	    public String setupNewClientFlow(){
+	    	
+	    	
+	    	return "Success";
+	    }
+	    
+	    @ResponseStatus(value = HttpStatus.OK)
 	    @RequestMapping(value = "/completeTask", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	    public String completeTask(@RequestParam(value="taskId") String taskId) {
 	    	taskService.complete(taskId);
