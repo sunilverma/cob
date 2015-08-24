@@ -9,6 +9,11 @@ public class TaskEndListener  implements TaskListener{
 
 	
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public void notify(DelegateTask delegateTask) {
 		//System.out.println("\n\n TaskEndListener::: I am called :::\n\n\n" + delegateTask.getVariables());
