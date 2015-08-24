@@ -3,7 +3,11 @@
   <signal id="alertSignal" name="alert"></signal>
   <process id="systemConfig" name="My process" isExecutable="true">
     <startEvent id="startevent1" name="Start"></startEvent>
-    <userTask id="usertask1" name="System Configuration"></userTask>
+    <userTask id="usertask1" name="System Configuration">
+      <extensionElements>
+        <activiti:taskListener event="create" class="org.cob.TaskStartListener"></activiti:taskListener>
+      </extensionElements>
+    </userTask>
     <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="usertask1"></sequenceFlow>
     <subProcess id="subprocess1" name="Cash Wires Sub Flow" activiti:async="true">
       <startEvent id="startevent2" name="Start"></startEvent>
