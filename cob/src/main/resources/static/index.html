@@ -1,0 +1,17 @@
+<!doctype html>
+<html ng-app="myApp">
+	<head>
+		<title>Hello AngularJS</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+    	<!-- <script src="hello.js"></script> -->
+    	<script src="controller.js"></script>
+	</head>
+
+	<body>
+		
+		<div ng-controller="MyController">
+			<h1>{{greeting.taskName}}</h1>
+			<p>{{greeting.taskId}}</p>
+		</div>
+	</body>
+</html>
