@@ -11,7 +11,7 @@ public class TaskEndListener  implements TaskListener{
 
 	@Override
 	public void notify(DelegateTask delegateTask) {
-		System.out.println("\n\n TaskEndListener::: I am called :::\n\n\n" + delegateTask.getVariables());
+		//System.out.println("\n\n TaskEndListener::: I am called :::\n\n\n" + delegateTask.getVariables());
 		boolean var = (boolean) delegateTask.getVariable("input");
 		var=true;
 		delegateTask.setVariable("input", var);		

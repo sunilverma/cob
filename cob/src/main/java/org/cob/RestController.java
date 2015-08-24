@@ -1,5 +1,6 @@
 package org.cob;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
 import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.Execution;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+
 
 
 
@@ -55,17 +59,21 @@ public class RestController {
 	    
 	    @ResponseStatus(value = HttpStatus.OK)
 	    @RequestMapping(value = "/listTask", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	    public Map<String,String> listTask(@RequestParam(value="processInstanceId") String processInstanceId) {
+	    public List<Map<String,String>> listTask(@RequestParam(value="processInstanceId") String processInstanceId) {
+	    	List<Map<String,String>> reponse=new ArrayList<Map<String,String>>();
 	    	List<Task> tasks= taskService.createTaskQuery()
 	                .processInstanceId(processInstanceId)
 	                .orderByTaskName().asc()
 	                .list();
-	    	Map<String,String> taskNameList= new HashMap<String, String>();
+	    	
 	    	for(Task task:tasks){
-	    		taskNameList.put(task.getId(), task.getName());
+	    		Map<String,String> taskNameList= new HashMap<String, String>();
+	    		taskNameList.put("taskId", task.getId());
+	    		taskNameList.put("taskName", task.getName());
+	    		reponse.add(taskNameList);
 	    	}
 
-	    	return taskNameList;
+	    	return reponse;
 	    }
 	    
 	    @ResponseStatus(value = HttpStatus.OK)
@@ -74,6 +82,23 @@ public class RestController {
 	    	
 	    	
 	    	return "Success";
+	    }
+	    @ResponseStatus(value = HttpStatus.OK)
+	    @RequestMapping(value = "/alertSignal", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	    public void invokeSignal(){
+	    	runtimeService.signalEventReceived("alert");
+	    	List<Execution> executions = runtimeService.createExecutionQuery().signalEventSubscriptionName("alert").list();
+	    	for(Execution exec: executions){
+	    		System.out.println(exec.getProcessInstanceId());
+	    		System.out.println(exec.getParentId());
+	    	}
+	    }
+	    
+	    @ResponseStatus(value = HttpStatus.OK)
+	    @RequestMapping(value = "/completeSystemConfTask", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	    public String completeTask(@RequestBody Map<String, Object> data) {
+	    	taskService.complete(data.get("taskId").toString(),data);
+	    	return "Task Id: "+data.get("taskId")+" completed!!!.";
 	    }
 	    
 	    @ResponseStatus(value = HttpStatus.OK)
